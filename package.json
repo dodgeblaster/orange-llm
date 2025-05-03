@@ -1,0 +1,25 @@
+{
+  "name": "ai-chat-llm",
+  "version": "1.0.0",
+  "description": "LLM service module for AI chat application",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "keywords": [
+    "llm",
+    "ai",
+    "chat"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.758.0"
+  }
+}
