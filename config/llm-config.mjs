@@ -1,0 +1,177 @@
+/**
+ * LLM Configuration Manager
+ * Centralizes configuration management for the LLM module
+ * 
+ * @typedef {import('./models').ModelConfig} ModelConfig
+ * @typedef {import('./pricing').TokenPricing} TokenPricing
+ * 
+ * @typedef {Object} LLMConfig
+ * @property {string} [region] - AWS region
+ * @property {string} defaultModelId - Default model ID
+ * @property {Object} inferenceDefaults - Default inference parameters
+ * @property {number} inferenceDefaults.maxTokens - Maximum tokens
+ * @property {number} inferenceDefaults.temperature - Temperature
+ * @property {number} inferenceDefaults.topP - Top-p
+ * @property {boolean} enableTokenTracking - Whether to track token usage
+ * @property {boolean} debug - Whether debug mode is enabled
+ */
+
+import { DEFAULT_MODEL, getInferenceConfig, getModelConfigById } from './models.mjs';
+import { getPricingByModelId, calculateCost } from './pricing.mjs';
+
+/**
+ * Default configuration
+ * @type {LLMConfig}
+ */
+const DEFAULT_CONFIG = {
+  region: 'us-east-1',
+  defaultModelId: DEFAULT_MODEL,
+  inferenceDefaults: {
+    maxTokens: 2048,
+    temperature: 0.7,
+    topP: 0.9
+  },
+  enableTokenTracking: true,
+  debug: false
+};
+
+/**
+ * LLM Configuration Manager
+ * Manages configuration for LLM services
+ */
+export class LLMConfigManager {
+  static instance;
+  
+  /**
+   * @param {Partial<LLMConfig>} [config] - Initial configuration
+   * @private
+   */
+  constructor(config = {}) {
+    // Merge provided config with defaults
+    this.config = {
+      ...DEFAULT_CONFIG,
+      ...config,
+      inferenceDefaults: {
+        ...DEFAULT_CONFIG.inferenceDefaults,
+        ...(config.inferenceDefaults || {})
+      }
+    };
+  }
+  
+  /**
+   * Get the singleton instance of the configuration manager
+   * @param {Partial<LLMConfig>} [config] - Configuration to update
+   * @returns {LLMConfigManager} The singleton instance
+   */
+  static getInstance(config) {
+    if (!LLMConfigManager.instance) {
+      LLMConfigManager.instance = new LLMConfigManager(config);
+    } else if (config) {
+      // Update existing instance with new config
+      LLMConfigManager.instance.updateConfig(config);
+    }
+    
+    return LLMConfigManager.instance;
+  }
+  
+  /**
+   * Update the configuration
+   * @param {Partial<LLMConfig>} config - Configuration to update
+   */
+  updateConfig(config) {
+    this.config = {
+      ...this.config,
+      ...config,
+      inferenceDefaults: {
+        ...this.config.inferenceDefaults,
+        ...(config.inferenceDefaults || {})
+      }
+    };
+  }
+  
+  /**
+   * Get the current configuration
+   * @returns {LLMConfig} The current configuration
+   */
+  getConfig() {
+    return { ...this.config };
+  }
+  
+  /**
+   * Get the AWS region
+   * @returns {string} The AWS region
+   */
+  getRegion() {
+    return this.config.region || 'us-east-1';
+  }
+  
+  /**
+   * Get the default model ID
+   * @returns {string} The default model ID
+   */
+  getDefaultModelId() {
+    return this.config.defaultModelId;
+  }
+  
+  /**
+   * Get model configuration by ID
+   * @param {string} modelId - The model ID
+   * @returns {ModelConfig|undefined} The model configuration
+   */
+  getModelConfig(modelId) {
+    return getModelConfigById(modelId);
+  }
+  
+  /**
+   * Get inference configuration for a model
+   * @param {string} [modelId] - The model ID
+   * @returns {Object} The inference configuration
+   */
+  getInferenceConfig(modelId) {
+    const targetModelId = modelId || this.config.defaultModelId;
+    const modelInferenceConfig = getInferenceConfig(targetModelId);
+    
+    // Merge with default inference config
+    return {
+      ...this.config.inferenceDefaults,
+      ...modelInferenceConfig
+    };
+  }
+  
+  /**
+   * Get pricing for a model
+   * @param {string} modelId - The model ID
+   * @returns {TokenPricing} The pricing information
+   */
+  getModelPricing(modelId) {
+    return getPricingByModelId(modelId);
+  }
+  
+  /**
+   * Calculate cost for tokens
+   * @param {string} modelId - The model ID
+   * @param {number} inputTokens - Number of input tokens
+   * @param {number} outputTokens - Number of output tokens
+   * @returns {{inputCost: string, outputCost: string, totalCost: string}} The calculated costs
+   */
+  calculateCost(modelId, inputTokens, outputTokens) {
+    const pricing = this.getModelPricing(modelId);
+    return calculateCost(pricing, inputTokens, outputTokens);
+  }
+  
+  /**
+   * Check if token tracking is enabled
+   * @returns {boolean} Whether token tracking is enabled
+   */
+  isTokenTrackingEnabled() {
+    return this.config.enableTokenTracking;
+  }
+  
+  /**
+   * Check if debug mode is enabled
+   * @returns {boolean} Whether debug mode is enabled
+   */
+  isDebugEnabled() {
+    return this.config.debug;
+  }
+}

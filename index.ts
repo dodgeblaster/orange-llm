@@ -17,10 +17,10 @@ import {
   InvokeResult,
   AssistantResponse,
   AssistantToolRequest
-} from './types';
+} from './types.js';
 
 // Main factory for creating LLM services
-import { LLMServiceFactory } from './llm-service-factory';
+import { LLMServiceFactory } from './llm-service-factory.js';
 
 // Export only the public interface
 export {
