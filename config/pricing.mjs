@@ -2,142 +2,120 @@
  * Pricing configuration for LLM services
  * This file centralizes all pricing-related configuration
  * 
- * @typedef {Object} TokenPricing
- * @property {number} input - Cost per 1000 input tokens in USD
- * @property {number} output - Cost per 1000 output tokens in USD
- * 
- * @typedef {Object} ModelPricingConfig
- * @property {string} modelId - The model ID
- * @property {TokenPricing} pricing - The pricing information
- * @property {string} [displayName] - Human-readable name for the model
+ * @typedef {import('../types').ModelPricing} ModelPricing
  */
+
+/**
+ * Format a price to a string with 4 decimal places
+ * @param {number} price - The price to format
+ * @returns {string} The formatted price
+ */
+function formatPrice(price) {
+  return price.toFixed(4);
+}
 
 /**
  * Claude model pricing
- * @type {Record<string, ModelPricingConfig>}
+ * @type {Record<string, ModelPricing>}
  */
 export const CLAUDE_PRICING = {
-  'claude-3-7-sonnet': {
-    modelId: 'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
-    displayName: 'Claude 3.7 Sonnet',
-    pricing: {
-      input: 0.000003,  // $0.003 per 1000 tokens
-      output: 0.000015   // $0.015 per 1000 tokens
-    }
+  'us.anthropic.claude-3-7-sonnet-20250219-v1:0': {
+    input: (tokens) => formatPrice(tokens * 0.000015),
+    output: (tokens) => formatPrice(tokens * 0.000075)
   },
-  'claude-3-5-sonnet': {
-    modelId: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
-    displayName: 'Claude 3.5 Sonnet',
-    pricing: {
-      input: 0.000003,  // $0.003 per 1000 tokens
-      output: 0.000015   // $0.015 per 1000 tokens
-    }
+  'anthropic.claude-3-5-sonnet-20241022-v2:0': {
+    input: (tokens) => formatPrice(tokens * 0.000010),
+    output: (tokens) => formatPrice(tokens * 0.000050)
   },
-  'claude-3-sonnet': {
-    modelId: 'anthropic.claude-3-sonnet-20240229-v1:0',
-    displayName: 'Claude 3 Sonnet',
-    pricing: {
-      input: 0.000003,  // $0.003 per 1000 tokens
-      output: 0.000015   // $0.015 per 1000 tokens
-    }
+  'anthropic.claude-3-sonnet-20240229-v1:0': {
+    input: (tokens) => formatPrice(tokens * 0.000008),
+    output: (tokens) => formatPrice(tokens * 0.000024)
   }
 };
 
 /**
- * Amazon Nova model pricing
- * @type {Record<string, ModelPricingConfig>}
+ * Nova model pricing
+ * @type {Record<string, ModelPricing>}
  */
 export const NOVA_PRICING = {
-  'nova-premier': {
-    modelId: 'amazon.nova-premier-v1:0',
-    displayName: 'Amazon Nova Premier',
-    pricing: {
-      input: 0.0000025,  // $0.0008 per 1000 tokens
-      output: 0.0000125   // $0.0032 per 1000 tokens
-    }
+  'amazon.nova-pro-v1:0': {
+    input: (tokens) => formatPrice(tokens * 0.000012),
+    output: (tokens) => formatPrice(tokens * 0.000016)
   },
-  'nova-pro': {
-    modelId: 'amazon.nova-pro-v1:0',
-    displayName: 'Amazon Nova Pro',
-    pricing: {
-      input: 0.0000008,  // $0.0008 per 1000 tokens
-      output: 0.0000032   // $0.0032 per 1000 tokens
-    }
+  'amazon.nova-lite-v1:0': {
+    input: (tokens) => formatPrice(tokens * 0.000006),
+    output: (tokens) => formatPrice(tokens * 0.000008)
   },
-  'nova-lite': {
-    modelId: 'amazon.nova-lite-v1:0',
-    displayName: 'Amazon Nova Lite',
-    pricing: {
-      input: 0.00000006,  // $0.00006 per 1000 tokens
-      output: 0.00000024   // $0.00024 per 1000 tokens
-    }
-  },
-  'nova-micro': {
-    modelId: 'amazon.nova-micro-v1:0',
-    displayName: 'Amazon Nova Micro',
-    pricing: {
-      input: 0.000000035,  // $0.000035 per 1000 tokens
-      output: 0.00000014   // $0.00014 per 1000 tokens
-    }
+  'amazon.nova-micro-v1:0': {
+    input: (tokens) => formatPrice(tokens * 0.000003),
+    output: (tokens) => formatPrice(tokens * 0.000004)
   }
 };
 
 /**
- * Meta Llama model pricing
- * @type {Record<string, ModelPricingConfig>}
+ * Llama model pricing
+ * @type {Record<string, ModelPricing>}
  */
 export const LLAMA_PRICING = {
-  'llama-3-3': {
-    modelId: 'us.meta.llama3-3-70b-instruct-v1:0',
-    displayName: 'Llama 3.3 70B',
-    pricing: {
-      input: 0.00000072,  // $0.00072 per 1000 tokens
-      output: 0.00000072   // $0.00072 per 1000 tokens
-    }
+  'us.meta.llama3-3-70b-instruct-v1:0': {
+    input: (tokens) => formatPrice(tokens * 0.000007),
+    output: (tokens) => formatPrice(tokens * 0.000009)
   }
 };
 
 /**
- * All model pricing configurations
- * @type {Record<string, ModelPricingConfig>}
+ * Ollama model pricing (free/local)
+ * @type {Record<string, ModelPricing>}
  */
-export const ALL_MODEL_PRICING = {
+export const OLLAMA_PRICING = {
+  // Default pricing for all Ollama models (free)
+  'default': {
+    input: () => '0.0000',
+    output: () => '0.0000'
+  }
+};
+
+/**
+ * All model pricing
+ * @type {Record<string, ModelPricing>}
+ */
+export const ALL_PRICING = {
   ...CLAUDE_PRICING,
   ...NOVA_PRICING,
   ...LLAMA_PRICING
 };
 
 /**
- * Get pricing for a specific model ID
+ * Get pricing for a model
  * @param {string} modelId - The model ID to get pricing for
- * @returns {TokenPricing} The pricing information
+ * @returns {ModelPricing} The pricing information
  */
-export function getPricingByModelId(modelId) {
-  // Find the pricing config that matches the model ID
-  const pricingConfig = Object.values(ALL_MODEL_PRICING).find(
-    config => config.modelId === modelId
-  );
-  
-  // If found, return the pricing
-  if (pricingConfig) {
-    return pricingConfig.pricing;
+export function getModelPricing(modelId) {
+  // For Ollama models, return the default free pricing
+  if (modelId.indexOf('.') === -1) {
+    return OLLAMA_PRICING.default;
   }
   
-  // Default to Nova Micro pricing if no match found
-  return NOVA_PRICING['nova-micro'].pricing;
+  // For other models, look up in the pricing table
+  return ALL_PRICING[modelId] || {
+    input: () => '0.0000',
+    output: () => '0.0000'
+  };
 }
 
 /**
- * Calculate cost for tokens
- * @param {TokenPricing} pricing - The pricing information
+ * Calculate cost for a model usage
+ * @param {string} modelId - The model ID
  * @param {number} inputTokens - Number of input tokens
  * @param {number} outputTokens - Number of output tokens
- * @returns {{inputCost: string, outputCost: string, totalCost: string}} The calculated costs
+ * @returns {{inputCost: string, outputCost: string, totalCost: string}} Cost information
  */
-export function calculateCost(pricing, inputTokens, outputTokens) {
-  const inputCost = (inputTokens * pricing.input).toFixed(6);
-  const outputCost = (outputTokens * pricing.output).toFixed(6);
-  const totalCost = (parseFloat(inputCost) + parseFloat(outputCost)).toFixed(6);
+export function calculateCost(modelId, inputTokens, outputTokens) {
+  const pricing = getModelPricing(modelId);
+  
+  const inputCost = pricing.input(inputTokens);
+  const outputCost = pricing.output(outputTokens);
+  const totalCost = formatPrice(parseFloat(inputCost) + parseFloat(outputCost));
   
   return {
     inputCost,

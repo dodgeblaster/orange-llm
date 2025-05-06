@@ -102,6 +102,40 @@ export const LLAMA_MODELS = {
 };
 
 /**
+ * Ollama models
+ * @type {Record<string, ModelConfig>}
+ */
+export const OLLAMA_MODELS = {
+  'llama3.1': {
+    id: 'llama3.1',
+    provider: 'ollama',
+    displayName: 'Llama 3.1',
+    description: 'Meta Llama 3.1 model via Ollama',
+    maxTokens: 4096,
+    defaultTemperature: 0.7,
+    defaultTopP: 0.9
+  },
+  'mistral': {
+    id: 'mistral',
+    provider: 'ollama',
+    displayName: 'Mistral',
+    description: 'Mistral model via Ollama',
+    maxTokens: 4096,
+    defaultTemperature: 0.7,
+    defaultTopP: 0.9
+  },
+  'gemma': {
+    id: 'gemma',
+    provider: 'ollama',
+    displayName: 'Gemma',
+    description: 'Google Gemma model via Ollama',
+    maxTokens: 4096,
+    defaultTemperature: 0.7,
+    defaultTopP: 0.9
+  }
+};
+
+/**
  * Model groups for fallback chains
  * @type {Record<string, ModelGroup>}
  */
@@ -120,6 +154,11 @@ export const MODEL_GROUPS = {
     name: 'Llama Models',
     models: Object.values(LLAMA_MODELS).map(model => model.id),
     description: 'Meta Llama models in order of preference'
+  },
+  'ollama': {
+    name: 'Ollama Models',
+    models: Object.values(OLLAMA_MODELS).map(model => model.id),
+    description: 'Models available through Ollama'
   }
 };
 
@@ -130,7 +169,8 @@ export const MODEL_GROUPS = {
 export const ALL_MODELS = {
   ...CLAUDE_MODELS,
   ...NOVA_MODELS,
-  ...LLAMA_MODELS
+  ...LLAMA_MODELS,
+  ...OLLAMA_MODELS
 };
 
 /**

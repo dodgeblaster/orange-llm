@@ -62,6 +62,7 @@ export interface LLMServiceConfig {
     region?: string;
     modelId: string;
     provider: LLMProvider;
+    endpoint?: string;
 }
 export declare enum LLMProvider {
     BEDROCK = "bedrock",

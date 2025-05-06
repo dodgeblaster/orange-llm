@@ -3,7 +3,7 @@
  * Centralizes configuration management for the LLM module
  * 
  * @typedef {import('./models').ModelConfig} ModelConfig
- * @typedef {import('./pricing').TokenPricing} TokenPricing
+ * @typedef {import('../types').ModelPricing} ModelPricing
  * 
  * @typedef {Object} LLMConfig
  * @property {string} [region] - AWS region
@@ -17,7 +17,7 @@
  */
 
 import { DEFAULT_MODEL, getInferenceConfig, getModelConfigById } from './models.mjs';
-import { getPricingByModelId, calculateCost } from './pricing.mjs';
+import { getModelPricing, calculateCost } from './pricing.mjs';
 
 /**
  * Default configuration
@@ -141,10 +141,10 @@ export class LLMConfigManager {
   /**
    * Get pricing for a model
    * @param {string} modelId - The model ID
-   * @returns {TokenPricing} The pricing information
+   * @returns {ModelPricing} The pricing information
    */
   getModelPricing(modelId) {
-    return getPricingByModelId(modelId);
+    return getModelPricing(modelId);
   }
   
   /**
@@ -155,8 +155,7 @@ export class LLMConfigManager {
    * @returns {{inputCost: string, outputCost: string, totalCost: string}} The calculated costs
    */
   calculateCost(modelId, inputTokens, outputTokens) {
-    const pricing = this.getModelPricing(modelId);
-    return calculateCost(pricing, inputTokens, outputTokens);
+    return calculateCost(modelId, inputTokens, outputTokens);
   }
   
   /**

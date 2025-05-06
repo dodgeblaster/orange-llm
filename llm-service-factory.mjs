@@ -4,7 +4,7 @@
  * @typedef {import('./types').LLMServiceConfig} LLMServiceConfig
  */
 
-import { BedrockService } from './providers/index.mjs';
+import { BedrockService, OllamaService } from './providers/index.mjs';
 import { LLMConfigManager } from './config/index.mjs';
 
 export class LLMServiceFactory {
@@ -14,7 +14,7 @@ export class LLMServiceFactory {
    * @returns {LLMService} An instance of LLMService
    */
   static createService(config) {
-    const { provider, modelId, region } = config;
+    const { provider, modelId, region, endpoint } = config;
     
     // Initialize the configuration manager with any provided config
     LLMConfigManager.getInstance({
@@ -26,7 +26,7 @@ export class LLMServiceFactory {
       case 'bedrock':
         return new BedrockService(region, modelId);
       case 'ollama':
-        throw new Error('Ollama provider not yet implemented');
+        return new OllamaService(endpoint || 'http://localhost:11434', modelId);
       default:
         throw new Error(`Unknown LLM provider: ${provider}`);
     }
