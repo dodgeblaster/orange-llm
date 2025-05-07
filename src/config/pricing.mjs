@@ -38,17 +38,21 @@ export const CLAUDE_PRICING = {
  * @type {Record<string, ModelPricing>}
  */
 export const NOVA_PRICING = {
+  'us.amazon.nova-premier-v1:0': {
+    input: (tokens) => formatPrice((tokens / 1000) * 0.0025),
+    output: (tokens) => formatPrice((tokens / 1000) * 0.0125)
+  },
   'amazon.nova-pro-v1:0': {
-    input: (tokens) => formatPrice(tokens * 0.000012),
-    output: (tokens) => formatPrice(tokens * 0.000016)
+    input: (tokens) => formatPrice((tokens / 1000) * 0.0008),
+    output: (tokens) => formatPrice((tokens / 1000) * 0.0032)
   },
   'amazon.nova-lite-v1:0': {
-    input: (tokens) => formatPrice(tokens * 0.000006),
-    output: (tokens) => formatPrice(tokens * 0.000008)
+    input: (tokens) => formatPrice((tokens / 1000) * 0.00006),
+    output: (tokens) => formatPrice((tokens / 1000) * 0.00024)
   },
   'amazon.nova-micro-v1:0': {
-    input: (tokens) => formatPrice(tokens * 0.000003),
-    output: (tokens) => formatPrice(tokens * 0.000004)
+    input: (tokens) => formatPrice((tokens / 1000) * 0.000035),
+    output: (tokens) => formatPrice((tokens / 1000) * 0.00014)
   }
 };
 
@@ -92,10 +96,12 @@ export const ALL_PRICING = {
  */
 export function getModelPricing(modelId) {
   // For Ollama models, return the default free pricing
+  console.log('MODEID: : ', modelId)
   if (modelId.indexOf('.') === -1) {
     return OLLAMA_PRICING.default;
   }
   
+  console.log('::: ', JSON.stringify(ALL_PRICING[modelId], null, 2))
   // For other models, look up in the pricing table
   return ALL_PRICING[modelId] || {
     input: () => '0.0000',
@@ -111,6 +117,8 @@ export function getModelPricing(modelId) {
  * @returns {{inputCost: string, outputCost: string, totalCost: string}} Cost information
  */
 export function calculateCost(modelId, inputTokens, outputTokens) {
+  
+  console.log('MODELID: ', modelId)
   const pricing = getModelPricing(modelId);
   
   const inputCost = pricing.input(inputTokens);

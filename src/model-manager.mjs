@@ -1,8 +1,9 @@
 /**
  * @typedef {import('./types').ModelManager} ModelManager
+ * @typedef {import('./config/llm-config').LLMConfigManager} LLMConfigManager
  */
 
-import { LLMConfigManager, MODEL_GROUPS } from './config/index.mjs';
+import { MODEL_GROUPS } from './config/index.mjs';
 
 /**
  * Default implementation of the ModelManager interface
@@ -11,10 +12,23 @@ import { LLMConfigManager, MODEL_GROUPS } from './config/index.mjs';
 export class DefaultModelManager {
   /**
    * @param {string} [initialModel] - The initial model to use
+   * @param {LLMConfigManager} [configManager] - Configuration manager instance
    */
-  constructor(initialModel) {
-    this.configManager = LLMConfigManager.getInstance();
-    this.currentModel = initialModel || this.configManager.getDefaultModelId();
+  constructor(initialModel, configManager) {
+    this.configManager = configManager;
+    this.currentModel = initialModel || (configManager ? configManager.getDefaultModelId() : initialModel);
+  }
+
+  /**
+   * Set the configuration manager
+   * @param {LLMConfigManager} configManager - Configuration manager instance
+   */
+  setConfigManager(configManager) {
+    this.configManager = configManager;
+    // If no model was set and we now have a config manager, use its default
+    if (!this.currentModel && this.configManager) {
+      this.currentModel = this.configManager.getDefaultModelId();
+    }
   }
 
   /**
@@ -30,6 +44,9 @@ export class DefaultModelManager {
    * @returns {object} The inference configuration
    */
   getInferenceConfig() {
+    if (!this.configManager) {
+      return {}; // Return empty config if no config manager is set
+    }
     return this.configManager.getInferenceConfig(this.currentModel);
   }
 
@@ -80,12 +97,14 @@ export class DefaultModelManager {
       this.fallbackToNextModel();
       return retryCallback();
     }
+
+    return retryCallback();
     
-    // General fallback logic
-    if (this.fallbackToNextModel()) {
-      console.log(`Falling back to model: ${this.currentModel}`);
-      return retryCallback();
-    }
+    // // General fallback logic
+    // if (this.fallbackToNextModel()) {
+    //   console.log(`Falling back to model: ${this.currentModel}`);
+    //   return retryCallback();
+    // }
 
     // If we've exhausted all fallbacks, throw the error
     throw error;

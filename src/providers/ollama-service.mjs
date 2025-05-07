@@ -5,13 +5,13 @@
  * @typedef {import('../types').TokenUsage} TokenUsage
  * @typedef {import('../types').Tool} Tool
  * @typedef {import('../types').InvokeResult} InvokeResult
+ * @typedef {import('../config/llm-config').LLMConfigManager} LLMConfigManager
  */
 
 import ollama from 'ollama';
 import { DefaultModelManager } from '../model-manager.mjs';
 import { DefaultToolManager } from '../tool-manager.mjs';
 import { DefaultResponseHandler } from '../response-handler.mjs';
-import { LLMConfigManager } from '../config/index.mjs';
 
 // Session-level token usage tracking
 /** @type {TokenUsage} */
@@ -26,21 +26,23 @@ const sessionTokenUsage = {
  */
 export class OllamaService {
   /**
+   * @param {LLMConfigManager} configManager - Configuration manager instance
    * @param {string} [endpoint='http://localhost:11434'] - Ollama API endpoint
    * @param {string} [modelId='llama3.1'] - Model ID
    */
   constructor(
+    configManager,
     endpoint = 'http://localhost:11434',
     modelId = 'llama3.1'
   ) {
-    // Get configuration manager instance
-    this.configManager = LLMConfigManager.getInstance();
+    // Store the configuration manager instance
+    this.configManager = configManager;
     
     // Set the Ollama API endpoint
     this.endpoint = endpoint;
     
-    // Initialize managers with the provided model ID directly
-    this.modelManager = new DefaultModelManager(modelId);
+    // Initialize managers with the provided model ID and config manager
+    this.modelManager = new DefaultModelManager(modelId, configManager);
     this.toolManager = new DefaultToolManager();
     this.responseHandler = new DefaultResponseHandler();
     this.currentModelId = modelId;
@@ -60,7 +62,7 @@ export class OllamaService {
       process.env.OLLAMA_HOST = endpoint;
     }
     
-   // console.log(`Initialized Ollama service with model: ${modelId} at endpoint: ${endpoint}`);
+    //console.log(`Initialized Ollama service with model: ${modelId} at endpoint: ${endpoint}`);
   }
   
   /**

@@ -5,13 +5,13 @@
  * @typedef {import('../types').TokenUsage} TokenUsage
  * @typedef {import('../types').Tool} Tool
  * @typedef {import('../types').InvokeResult} InvokeResult
+ * @typedef {import('../config/llm-config').LLMConfigManager} LLMConfigManager
  */
 
 import { BedrockRuntimeClient, ConverseCommand } from '@aws-sdk/client-bedrock-runtime';
 import { DefaultModelManager } from '../model-manager.mjs';
 import { DefaultToolManager } from '../tool-manager.mjs';
 import { DefaultResponseHandler } from '../response-handler.mjs';
-import { LLMConfigManager } from '../config/index.mjs';
 
 // Session-level token usage tracking
 /** @type {TokenUsage} */
@@ -26,21 +26,23 @@ const sessionTokenUsage = {
  */
 export class BedrockService {
   /**
+   * @param {LLMConfigManager} configManager - Configuration manager instance
    * @param {string} [region='us-west-2'] - AWS region
    * @param {string} [modelId='amazon.nova-micro-v1:0'] - Model ID
    */
   constructor(
+    configManager,
     region = 'us-west-2',
     modelId = 'amazon.nova-micro-v1:0'
   ) {
-    // Get configuration manager instance
-    this.configManager = LLMConfigManager.getInstance();
+    // Store the configuration manager instance
+    this.configManager = configManager;
     
     // Initialize client with hardcoded region that was working before
     this.client = new BedrockRuntimeClient({ region: 'us-east-1' });
     
-    // Initialize managers with the provided model ID directly
-    this.modelManager = new DefaultModelManager(modelId);
+    // Initialize managers with the provided model ID and config manager
+    this.modelManager = new DefaultModelManager(modelId, configManager);
     this.toolManager = new DefaultToolManager();
     this.responseHandler = new DefaultResponseHandler();
     this.currentModelId = modelId;

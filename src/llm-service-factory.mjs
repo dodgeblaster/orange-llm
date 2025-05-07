@@ -16,17 +16,17 @@ export class LLMServiceFactory {
   static createService(config) {
     const { provider, modelId, region, endpoint } = config;
     
-    // Initialize the configuration manager with any provided config
-    LLMConfigManager.getInstance({
+    // Create a configuration manager instance with the provided config
+    const configManager = LLMConfigManager.create({
       region,
       defaultModelId: modelId
     });
     
     switch (provider) {
       case 'bedrock':
-        return new BedrockService(region, modelId);
+        return new BedrockService(configManager, region, modelId);
       case 'ollama':
-        return new OllamaService(endpoint || 'http://localhost:11434', modelId);
+        return new OllamaService(configManager, endpoint || 'http://localhost:11434', modelId);
       default:
         throw new Error(`Unknown LLM provider: ${provider}`);
     }

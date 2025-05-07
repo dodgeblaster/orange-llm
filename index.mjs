@@ -7,7 +7,7 @@
  */
 
 // Import the factory for creating LLM services
-import { LLMServiceFactory } from './llm-service-factory.mjs';
+import { LLMServiceFactory } from './src/llm-service-factory.mjs';
 
 /**
  * Re-export all types from the types.d.ts file

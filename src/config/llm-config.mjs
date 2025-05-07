@@ -40,11 +40,8 @@ const DEFAULT_CONFIG = {
  * Manages configuration for LLM services
  */
 export class LLMConfigManager {
-  static instance;
-  
   /**
    * @param {Partial<LLMConfig>} [config] - Initial configuration
-   * @private
    */
   constructor(config = {}) {
     // Merge provided config with defaults
@@ -59,19 +56,12 @@ export class LLMConfigManager {
   }
   
   /**
-   * Get the singleton instance of the configuration manager
-   * @param {Partial<LLMConfig>} [config] - Configuration to update
-   * @returns {LLMConfigManager} The singleton instance
+   * Create a new LLMConfigManager instance with the given configuration
+   * @param {Partial<LLMConfig>} [config] - Configuration to use
+   * @returns {LLMConfigManager} A new configuration manager instance
    */
-  static getInstance(config) {
-    if (!LLMConfigManager.instance) {
-      LLMConfigManager.instance = new LLMConfigManager(config);
-    } else if (config) {
-      // Update existing instance with new config
-      LLMConfigManager.instance.updateConfig(config);
-    }
-    
-    return LLMConfigManager.instance;
+  static create(config = {}) {
+    return new LLMConfigManager(config);
   }
   
   /**
