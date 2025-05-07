@@ -27,11 +27,18 @@ export class OllamaService {
    * @param {LLMConfigManager} configManager - Configuration manager instance
    * @param {string} [endpoint='http://localhost:11434'] - Ollama API endpoint
    * @param {string} [modelId='llama3.1'] - Model ID
+   * @param {object} [options={}] - Additional options
+   * @param {object} [options.ollamaClient] - Custom Ollama client for testing
+   * @param {DefaultModelManager} [options.modelManager] - Custom model manager for testing
+   * @param {DefaultToolManager} [options.toolManager] - Custom tool manager for testing
+   * @param {DefaultResponseHandler} [options.responseHandler] - Custom response handler for testing
+   * @param {boolean} [options.testing=false] - Whether running in test mode
    */
   constructor(
     configManager,
     endpoint = 'http://localhost:11434',
-    modelId = 'llama3.1'
+    modelId = 'llama3.1',
+    options = {}
   ) {
     // Store the configuration manager instance
     this.configManager = configManager;
@@ -39,11 +46,14 @@ export class OllamaService {
     // Set the Ollama API endpoint
     this.endpoint = endpoint;
     
-    // Initialize managers with the provided model ID and config manager
-    this.modelManager = new DefaultModelManager(modelId, configManager);
-    this.toolManager = new DefaultToolManager();
-    this.responseHandler = new DefaultResponseHandler();
+    // Initialize managers with provided instances or create new ones
+    this.modelManager = options.modelManager || new DefaultModelManager(modelId, configManager);
+    this.toolManager = options.toolManager || new DefaultToolManager();
+    this.responseHandler = options.responseHandler || new DefaultResponseHandler();
     this.currentModelId = modelId;
+    
+    // Store the Ollama client (or use the default)
+    this.ollamaClient = options.ollamaClient || ollama;
     
     /** @type {MessageStoreInterface|null} */
     this.messageStore = null;
@@ -55,12 +65,15 @@ export class OllamaService {
     this.tokenUsage = { input: 0, output: 0 };
     
     // Configure Ollama with the endpoint
-    if (endpoint && endpoint !== 'http://localhost:11434') {
+    if (endpoint && endpoint !== 'http://localhost:11434' && !options.testing) {
       // Set the Ollama API base URL if it's not the default
       process.env.OLLAMA_HOST = endpoint;
     }
     
-    //console.log(`Initialized Ollama service with model: ${modelId} at endpoint: ${endpoint}`);
+    // Only log in non-test environments
+    if (!options.testing) {
+      console.log(`Initialized Ollama service with model: ${modelId} at endpoint: ${endpoint}`);
+    }
   }
   
   /**
@@ -179,18 +192,10 @@ export class OllamaService {
       // Add tools if available
       if (tools && tools.length > 0) {
         request.tools = tools;
-        //console.log('Sending tools to Ollama:', JSON.stringify(tools, null, 2));
       }
       
-      // Call Ollama API
-      //console.log(`Sending request to Ollama with model: ${this.currentModelId}`);
-      const response = await ollama.chat(request);
-      //console.log('Received response from Ollama');
-      
-      // Log tool calls if present for debugging
-      if (response.message.tool_calls) {
-        //console.log('Tool calls in response:', JSON.stringify(response.message.tool_calls, null, 2));
-      }
+      // Call Ollama API using the client (which could be a mock in tests)
+      const response = await this.ollamaClient.chat(request);
       
       // Estimate token usage (Ollama doesn't provide this directly)
       const inputTokens = this.estimateTokenCount(JSON.stringify(formattedMessages));
@@ -204,7 +209,6 @@ export class OllamaService {
       
       return result;
     } catch (error) {
-      //console.error('Ollama error:', error);
       return await this.modelManager.handleError(error, () => this.invokeModel(messages));
     }
   }

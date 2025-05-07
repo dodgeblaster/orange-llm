@@ -27,22 +27,28 @@ export class BedrockService {
    * @param {LLMConfigManager} configManager - Configuration manager instance
    * @param {string} [region='us-west-2'] - AWS region
    * @param {string} [modelId='amazon.nova-micro-v1:0'] - Model ID
+   * @param {object} [options={}] - Additional options
+   * @param {BedrockRuntimeClient} [options.client] - Custom Bedrock client for testing
+   * @param {DefaultModelManager} [options.modelManager] - Custom model manager for testing
+   * @param {DefaultToolManager} [options.toolManager] - Custom tool manager for testing
+   * @param {DefaultResponseHandler} [options.responseHandler] - Custom response handler for testing
    */
   constructor(
     configManager,
     region = 'us-west-2',
-    modelId = 'amazon.nova-micro-v1:0'
+    modelId = 'amazon.nova-micro-v1:0',
+    options = {}
   ) {
     // Store the configuration manager instance
     this.configManager = configManager;
     
-    // Initialize client with hardcoded region that was working before
-    this.client = new BedrockRuntimeClient({ region: 'us-east-1' });
+    // Initialize client with provided client or create a new one
+    this.client = options.client || new BedrockRuntimeClient({ region: region || 'us-east-1' });
     
-    // Initialize managers with the provided model ID and config manager
-    this.modelManager = new DefaultModelManager(modelId, configManager);
-    this.toolManager = new DefaultToolManager();
-    this.responseHandler = new DefaultResponseHandler();
+    // Initialize managers with provided instances or create new ones
+    this.modelManager = options.modelManager || new DefaultModelManager(modelId, configManager);
+    this.toolManager = options.toolManager || new DefaultToolManager();
+    this.responseHandler = options.responseHandler || new DefaultResponseHandler();
     this.currentModelId = modelId;
     
     /** @type {MessageStoreInterface|null} */
@@ -54,7 +60,10 @@ export class BedrockService {
     /** @type {TokenUsage} */
     this.tokenUsage = { input: 0, output: 0 };
     
-    console.log(`Initialized Bedrock service with model: ${modelId}`);
+    // Only log in non-test environments
+    if (!options.testing) {
+      console.log(`Initialized Bedrock service with model: ${modelId}`);
+    }
   }
   
   /**

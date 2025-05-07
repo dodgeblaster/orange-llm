@@ -27,8 +27,5 @@
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.515.0",
     "ollama": "^0.5.15"
-  },
-  "devDependencies": {
-    "typescript": "^5.3.3"
   }
 }
