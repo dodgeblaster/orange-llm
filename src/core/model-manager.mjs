@@ -1,9 +1,9 @@
 /**
- * @typedef {import('./types').ModelManager} ModelManager
- * @typedef {import('./config/llm-config').LLMConfigManager} LLMConfigManager
+ * @typedef {import('../types').ModelManager} ModelManager
+ * @typedef {import('../config/llm-config').LLMConfigManager} LLMConfigManager
  */
 
-import { MODEL_GROUPS } from './config/index.mjs';
+import { MODEL_GROUPS } from '../config/index.mjs';
 
 /**
  * Default implementation of the ModelManager interface

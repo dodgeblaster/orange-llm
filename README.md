@@ -29,6 +29,31 @@ const service = LLMServiceFactory.createService({
 // ...
 ```
 
+## Project Structure
+
+```
+src/
+├── core/                  # Core functionality
+│   ├── model-manager.mjs
+│   ├── response-handler.mjs
+│   ├── tool-manager.mjs
+│   └── index.mjs          # Exports all core components
+│
+├── config/                # Configuration
+│   ├── llm-config.mjs
+│   ├── models.mjs
+│   ├── pricing.mjs
+│   └── index.mjs
+│
+├── providers/             # Provider implementations
+│   ├── bedrock-service.mjs
+│   ├── ollama-service.mjs
+│   └── index.mjs
+│
+├── types.mjs              # Type definitions
+└── index.mjs              # Main entry point (exports factory and types)
+```
+
 ## No Build Step Required
 
 This library uses native JavaScript (`.mjs`) files that can be imported directly without any build or compilation step. Type information is provided through JSDoc comments and TypeScript declaration files.

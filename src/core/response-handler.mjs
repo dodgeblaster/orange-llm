@@ -1,8 +1,8 @@
 /**
- * @typedef {import('./types').AssistantResponse} AssistantResponse
- * @typedef {import('./types').AssistantToolRequest} AssistantToolRequest
- * @typedef {import('./types').InvokeResult} InvokeResult
- * @typedef {import('./types').ResponseHandler} ResponseHandler
+ * @typedef {import('../types').AssistantResponse} AssistantResponse
+ * @typedef {import('../types').AssistantToolRequest} AssistantToolRequest
+ * @typedef {import('../types').InvokeResult} InvokeResult
+ * @typedef {import('../types').ResponseHandler} ResponseHandler
  */
 
 /**

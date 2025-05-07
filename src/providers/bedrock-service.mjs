@@ -9,9 +9,7 @@
  */
 
 import { BedrockRuntimeClient, ConverseCommand } from '@aws-sdk/client-bedrock-runtime';
-import { DefaultModelManager } from '../model-manager.mjs';
-import { DefaultToolManager } from '../tool-manager.mjs';
-import { DefaultResponseHandler } from '../response-handler.mjs';
+import { DefaultModelManager, DefaultToolManager, DefaultResponseHandler } from '../core/index.mjs';
 
 // Session-level token usage tracking
 /** @type {TokenUsage} */

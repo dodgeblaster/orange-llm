@@ -1,6 +1,6 @@
 /**
- * @typedef {import('./types').Tool} Tool
- * @typedef {import('./types').ToolManager} ToolManager
+ * @typedef {import('../types').Tool} Tool
+ * @typedef {import('../types').ToolManager} ToolManager
  * 
  * @typedef {Object} ToolExecutionResult
  * @property {'tool'} role
