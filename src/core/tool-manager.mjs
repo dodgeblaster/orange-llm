@@ -1,14 +1,4 @@
 /**
- * @typedef {import('../types').Tool} Tool
- * @typedef {import('../types').ToolManager} ToolManager
- * 
- * @typedef {Object} ToolExecutionResult
- * @property {'tool'} role
- * @property {string} toolUseId
- * @property {Object} content
- */
-
-/**
  * Default implementation of the ToolManager interface
  * @implements {ToolManager}
  */
@@ -27,7 +17,6 @@ export class DefaultToolManager {
     const existingToolNames = new Set(this.tools.map(t => t.getName()));
     const newTools = tools.filter(t => !existingToolNames.has(t.getName()));
     this.tools.push(...newTools);
-    console.log('Current tools in ToolManager:', this.tools.map(t => t.getName()));
   }
 
   /**

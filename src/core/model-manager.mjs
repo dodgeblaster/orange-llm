@@ -1,8 +1,3 @@
-/**
- * @typedef {import('../types').ModelManager} ModelManager
- * @typedef {import('../config/llm-config').LLMConfigManager} LLMConfigManager
- */
-
 import { MODEL_GROUPS } from '../config/index.mjs';
 
 /**
@@ -99,15 +94,6 @@ export class DefaultModelManager {
     }
 
     return retryCallback();
-    
-    // // General fallback logic
-    // if (this.fallbackToNextModel()) {
-    //   console.log(`Falling back to model: ${this.currentModel}`);
-    //   return retryCallback();
-    // }
-
-    // If we've exhausted all fallbacks, throw the error
-    throw error;
   }
 
   /**

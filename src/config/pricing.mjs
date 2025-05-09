@@ -96,12 +96,10 @@ export const ALL_PRICING = {
  */
 export function getModelPricing(modelId) {
   // For Ollama models, return the default free pricing
-  console.log('MODEID: : ', modelId)
   if (modelId.indexOf('.') === -1) {
     return OLLAMA_PRICING.default;
   }
   
-  console.log('::: ', JSON.stringify(ALL_PRICING[modelId], null, 2))
   // For other models, look up in the pricing table
   return ALL_PRICING[modelId] || {
     input: () => '0.0000',
@@ -117,8 +115,6 @@ export function getModelPricing(modelId) {
  * @returns {{inputCost: string, outputCost: string, totalCost: string}} Cost information
  */
 export function calculateCost(modelId, inputTokens, outputTokens) {
-  
-  console.log('MODELID: ', modelId)
   const pricing = getModelPricing(modelId);
   
   const inputCost = pricing.input(inputTokens);

@@ -1,27 +1,8 @@
-/**
- * LLM Configuration Manager
- * Centralizes configuration management for the LLM module
- * 
- * @typedef {import('./models').ModelConfig} ModelConfig
- * @typedef {import('../types').ModelPricing} ModelPricing
- * 
- * @typedef {Object} LLMConfig
- * @property {string} [region] - AWS region
- * @property {string} defaultModelId - Default model ID
- * @property {Object} inferenceDefaults - Default inference parameters
- * @property {number} inferenceDefaults.maxTokens - Maximum tokens
- * @property {number} inferenceDefaults.temperature - Temperature
- * @property {number} inferenceDefaults.topP - Top-p
- * @property {boolean} enableTokenTracking - Whether to track token usage
- * @property {boolean} debug - Whether debug mode is enabled
- */
-
 import { DEFAULT_MODEL, getInferenceConfig, getModelConfigById } from './models.mjs';
 import { getModelPricing, calculateCost } from './pricing.mjs';
 
 /**
  * Default configuration
- * @type {LLMConfig}
  */
 const DEFAULT_CONFIG = {
   region: 'us-east-1',

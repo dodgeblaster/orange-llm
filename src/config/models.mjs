@@ -1,23 +1,4 @@
 /**
- * Model configuration for LLM services
- * This file centralizes all model-related configuration
- * 
- * @typedef {Object} ModelConfig
- * @property {string} id - The model ID used by the provider
- * @property {'bedrock'|'ollama'} provider - The provider of the model
- * @property {string} displayName - Human-readable name for the model
- * @property {string} [description] - Description of the model
- * @property {number} [maxTokens] - Maximum tokens the model can handle
- * @property {number} [defaultTemperature] - Default temperature setting
- * @property {number} [defaultTopP] - Default top-p setting
- * 
- * @typedef {Object} ModelGroup
- * @property {string} name - Name of the model group
- * @property {string[]} models - Array of model IDs
- * @property {string} [description] - Description of the model group
- */
-
-/**
  * Claude models
  * @type {Record<string, ModelConfig>}
  */

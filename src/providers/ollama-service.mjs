@@ -1,18 +1,7 @@
-/**
- * @typedef {import('../types').LLMFormatterConfig} LLMFormatterConfig
- * @typedef {import('../types').LLMService} LLMService
- * @typedef {import('../types').MessageStoreInterface} MessageStoreInterface
- * @typedef {import('../types').TokenUsage} TokenUsage
- * @typedef {import('../types').Tool} Tool
- * @typedef {import('../types').InvokeResult} InvokeResult
- * @typedef {import('../config/llm-config').LLMConfigManager} LLMConfigManager
- */
-
 import ollama from 'ollama';
 import { DefaultModelManager, DefaultToolManager, DefaultResponseHandler } from '../core/index.mjs';
 
 // Session-level token usage tracking
-/** @type {TokenUsage} */
 const sessionTokenUsage = {
   input: 0,
   output: 0
@@ -61,7 +50,6 @@ export class OllamaService {
     /** @type {LLMFormatterConfig} */
     this.formatterConfig = {};
     
-    /** @type {TokenUsage} */
     this.tokenUsage = { input: 0, output: 0 };
     
     // Configure Ollama with the endpoint
