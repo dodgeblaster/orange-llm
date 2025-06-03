@@ -1,10 +1,13 @@
-/**
- * LLM Module Public API
- * 
- * This file defines the public interface for the LLM module.
- * Only types, classes, and functions that are intended to be used
- * by external modules should be exported from here.
- */
+import { createBedrockService } from './src/bedrock-service.mjs'
 
-import { LLMServiceFactory } from './src/index.mjs';
-export { LLMServiceFactory };
+
+export const createLLM = ({ region, modelId, provider }) => {
+    if (provider === 'bedrock') {
+        return createBedrockService({
+            region: region,
+            modelId: modelId,     
+        })
+    }
+
+    throw new Error(`${provider} is not supported`)
+}
