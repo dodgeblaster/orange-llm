@@ -1,4 +1,4 @@
-import { createBedrockService } from './src/bedrock-service.mjs'
+import { createBedrockService } from './bedrock_service.mjs'
 
 
 export const createLLM = ({ region, modelId, provider }) => {

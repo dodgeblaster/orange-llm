@@ -1,9 +1,9 @@
 import { BedrockRuntimeClient, ConverseCommand } from '@aws-sdk/client-bedrock-runtime';
-import {calculateCost} from './bedrock/price.mjs'
-import {getInferenceConfig} from './bedrock/inference.mjs'
-import {handleResponse} from './bedrock/handleResponse.mjs'
-import { ModelManager } from './bedrock/model-manager.mjs';
-import { createToolManager } from './bedrock/tool-manager.mjs';
+import {calculateCost} from './bedrock_price.mjs'
+import {getInferenceConfig} from './bedrock_inference.mjs'
+import {handleResponse} from './bedrock_handleResponse.mjs'
+import { ModelManager } from './bedrock_model_manager.mjs';
+import { createToolManager } from './bedrock_tool_manager.mjs';
 
 // Session-level token usage tracking
 const sessionTokenUsage = {

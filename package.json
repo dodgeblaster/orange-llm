@@ -1,7 +1,7 @@
 {
-  "name": "ai-chat-llm",
+  "name": "orange-llm",
   "version": "1.0.0",
-  "description": "A unified interface for interacting with various LLM providers",
+  "description": "An interface for interacting with various LLM providers",
   "main": "index.mjs",
   "type": "module",
   "types": "./types/types.d.ts",
