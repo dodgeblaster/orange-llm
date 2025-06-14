@@ -185,6 +185,8 @@ export function createBedrockService({
         const command = await prepareCommand(messages);
         const response = await client.send(command);
 
+        const totalTokens = response.usage.totalTokens
+
         // Track token usage and calculate costs
         const inputTokens = response.usage?.inputTokens || 0;
         const outputTokens = response.usage?.outputTokens || 0;
@@ -196,6 +198,7 @@ export function createBedrockService({
         // Add token usage and cost information to the response
         return {
           ...baseResponse,
+          totalTokens: totalTokens,
           tokenUsage: tokenUsageData.requestTokens,
           costInfo: tokenUsageData.costInfo
         };

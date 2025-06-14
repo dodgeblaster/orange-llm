@@ -1,19 +1,11 @@
 {
   "name": "orange-llm",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "An interface for interacting with various LLM providers",
   "main": "index.mjs",
   "type": "module",
-  "types": "./types/types.d.ts",
   "scripts": {
-    "test": "node --test tests/*.test.mjs",
-    "example:simple": "node examples/simple-chat.mjs",
-    "example:tools": "node examples/tool-usage.mjs",
-    "example:conversation": "node examples/conversation.mjs",
-    "example:multi": "node examples/multi-provider.mjs",
-    "example:streaming": "node examples/streaming.mjs",
-    "example:ollama": "node examples/ollama-example.mjs",
-    "generate-types": "mkdir -p types && npx tsc --declaration --emitDeclarationOnly --outDir ./types"
+    "test": "node --test tests/*.test.mjs"
   },
   "keywords": [
     "llm",
