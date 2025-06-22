@@ -140,7 +140,7 @@ export function createBedrockService({
   function getFormattedMessages(allMessages) {   
    let messages = allMessages
      .map(message => ({
-       role: message.role,
+       role: message.bedrockType,
        content: message.content
      }));
 

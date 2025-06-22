@@ -1,6 +1,6 @@
 {
   "name": "orange-llm",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "An interface for interacting with various LLM providers",
   "main": "index.mjs",
   "type": "module",

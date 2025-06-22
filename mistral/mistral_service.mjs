@@ -160,7 +160,7 @@ export function createMistralService({
   function getFormattedMessages(allMessages) {   
    let messages = allMessages
      .map(message => ({
-       role: message.role,
+       role: message.bedrockType,
        content: message.content,
        toolCalls: message.toolCalls, // Preserve toolCalls
        tool_call_id: message.tool_call_id // Preserve tool_call_id
