@@ -1,10 +1,10 @@
 # Orange LLM
 
-A lightweight JavaScript library for interacting with AWS Bedrock LLM models. Orange LLM provides a simplified interface for working with AWS Bedrock's AI models, handling message formatting, token usage tracking, and tool integration.
+A lightweight JavaScript library for interacting with multiple LLM providers. Orange LLM provides a simplified interface for working with AI models from AWS Bedrock and Mistral AI, handling message formatting, token usage tracking, and tool integration.
 
 ## Features
 
-- Simple interface for AWS Bedrock models
+- Simple interface for multiple LLM providers (AWS Bedrock, Mistral AI)
 - Token usage tracking and cost calculation
 - Tool/function calling support
 - Error handling with model fallback capability
@@ -18,11 +18,20 @@ npm install orange-llm
 
 ## Prerequisites
 
+### For AWS Bedrock
 - AWS account with access to Bedrock models
 - AWS credentials configured in your environment
+
+### For Mistral AI
+- Mistral AI API key
+- Set `MISTRAL_API_KEY` environment variable
+
+### General
 - Node.js environment
 
 ## Quick Start
+
+### AWS Bedrock
 
 ```javascript
 import { createLLM } from 'orange-llm';
@@ -37,11 +46,39 @@ const llm = createLLM({
 // Invoke the model with messages
 const result = await llm.invokeModel([
   {
-    bedrockType: 'system',
+    role: 'system',
     content: 'You are a helpful assistant.'
   },
   {
-    bedrockType: 'user',
+    role: 'user',
+    content: 'Tell me about quantum computing.'
+  }
+]);
+
+console.log(result.content);
+console.log('Token usage:', result.tokenUsage);
+console.log('Cost info:', result.costInfo);
+```
+
+### Mistral AI
+
+```javascript
+import { createLLM } from 'orange-llm';
+
+// Initialize the LLM service with Mistral AI
+const llm = createLLM({
+  provider: 'mistral',
+  modelId: 'mistral-small-latest'  // Choose your Mistral model
+});
+
+// Invoke the model with messages
+const result = await llm.invokeModel([
+  {
+    role: 'system',
+    content: 'You are a helpful assistant.'
+  },
+  {
+    role: 'user',
     content: 'Tell me about quantum computing.'
   }
 ]);
@@ -95,7 +132,7 @@ llm.registerTools([new WeatherTool()]);
 // Invoke the model with a message that might trigger tool use
 const result = await llm.invokeModel([
   {
-    bedrockType: 'user',
+    role: 'user',
     content: 'What\'s the weather like in Seattle?'
   }
 ]);
@@ -107,7 +144,7 @@ if (result.toolCalls && result.toolCalls.length > 0) {
   // Send the tool results back to the model
   const finalResult = await llm.invokeModel([
     {
-      bedrockType: 'user',
+      role: 'user',
       content: 'What\'s the weather like in Seattle?'
     },
     result,
@@ -158,7 +195,7 @@ Returns an LLM service object with the following methods:
 Invokes the model with the provided messages.
 
 - **messages** - Array of message objects with the following properties:
-  - **bedrockType** - Message role ('system', 'user', or 'assistant')
+  - **role** - Message role ('system', 'user', or 'assistant')
   - **content** - Message content (string)
 
 Returns a response object with:
